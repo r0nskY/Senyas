@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <script src="http://localhost:8080/socket.io/socket.io.js"></script>
+    <style>
+       #map {
+        height: 200px;
+        width: 620px;
+       }
+    </style>
+  </head>
+  <body>
+    <div id="map">
+      <form>
+        Room:<br>
+        <input type="text" id="room">
+        <br>
+        Latitude:<br>
+        <input type="text" id="lat">
+        <br>
+        Longitude:<br>
+        <input type="text" id="lng">
+        <br>
+        Imei:<br>
+        <input type="text" id="imei">
+        <br>
+        Name:<br>
+        <input type="text" id="name">
+        <br>
+        Emergency Type:<br>
+        <input type="text" id="emtype">
+        <br><br>
+      </form>
+      <button onclick="join()">Join</button>
+      <button onclick="passVal()">Submit</button>
+    </div>
+    <script>
+      var socket = io.connect('http://192.168.1.122:8080');
+      var room_name;
+      function join(){
+        room_name = document.getElementById('room').value;
+        console.log(room_name);
+        socket.emit('join', room_name);
+        socket.emit('count');
+      }
+    
+      function passVal(){
+        var lat = document.getElementById('lat').value;
+        var lng = document.getElementById('lng').value;
+        var imei = document.getElementById('imei').value;
+        var name = document.getElementById('name').value;
+        var emtype = document.getElementById('emtype').value;
+        var location = {
+          lat: lat,
+          lng: lng,
+          imei: imei,
+          name: name,
+          emtype: emtype
+        }
+
+        result = socket.emit('location_update', room_name, location);
+        /*result = socket.emit('updateLocation', location);
+          console.log(location);
+          console.log(result);*/
+      }    
+      
+      var sendLoc = function (){
+        var location = {
+          lat: 14.124343,
+          lng: 122.54544,
+          acc: 100
+        }
+
+        result = socket.emit('location_update', room_name, location);
+        console.log(location);
+        console.log(result);
+      };
+
+      /*function initMap() {
+        var initLoc = {lat: 14.1390, lng: 122.7633};
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 10,
+          center: initLoc
+        });
+        //var marker = new google.maps.Marker({
+          //position: uluru,
+         // map: map
+        //});
+        setInterval(sendLoc, 5000);
+      }*/
+     /* var sendLoc = function (){
+        var location = {
+          lat: 14.565644,
+          lng: 122.558777
+        }
+        result = socket.emit('updateLocation', location);
+        console.log(location);
+        console.log(result);
+        };*/
+        
+      //console.log(point1.setLatLng([data.lat, data.lng]));
+    </script>
+  </body>
+</html>
